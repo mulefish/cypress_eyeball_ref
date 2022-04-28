@@ -11,6 +11,16 @@ app.get('/bundle.js', function (req, res) {
   res.sendFile('static/bundle.js', { root: __dirname });
 });
 
+app.get('/parent.html', function (req, res) {
+  console.log("/parent.html");
+  res.sendFile('static/parent.html', { root: __dirname });
+});
+
+
+app.get('/iframe.html', function (req, res) {
+  console.log("/iframe.html");
+  res.sendFile('static/iframe.html', { root: __dirname });
+});
 
 
 const port = 3030 

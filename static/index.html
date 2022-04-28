@@ -21,27 +21,17 @@
 		</script> 
 	</head>
 	<body> 
-		Noise!
-		<div id="count">0</div> 
-		<button id="btn" onclick='countUp()'>countUp</button> 
-		<hr>
-
-
 		<table id='bigTable' border="1">
 			<tr>
 				<td colspan="2" valign="top">
-					LET THE NOISE BEGIN!
+					RACE!
 				</td>
 
 				</td>
 				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				</td>
 			</tr>
-
-
 		</table>
-
-
 			<div class="icon" id="a">🚀</div>
 			<div class="icon" id="b">🐔</div>
 			<div class="icon" id="c">🤽🏼</div>
@@ -52,9 +42,9 @@
 			<div class="icon" id="h">ABC</div>
 			<div class="icon" id="i">🚅</div>
 			<div class="icon" id="j">🐈</div>
-
-
-
+			<div id="count">0</div> 
+			<button id="btn" onclick='countUp()'>countUp</button> 
+			<hr>
 	</body> 
 	<script>
 		let icons = document.getElementsByClassName("icon")
@@ -76,7 +66,6 @@
 
 		function jiggle() { 
 			for (let i = 0; i < icons.length; i++) { 
-
 				const fuzzy = fuzzyspeeds[icons[i].id]
 				const newX = parseInt((Math.random() * fuzzy).toFixed(0))
 				const origX = parseInt(icons[i].style.left)
@@ -88,19 +77,13 @@
 			}
 		}
 
-
 		function init() { 
-
-
 			for (let i = 0; i < icons.length; i++) {
 				const icon = icons[i]
 				icon.style.position = "absolute"
 				icon.style.left = 50 + "px"
-				icon.style.top = 150 + ( i * 50 ) + "px"
-				
-				// console.log( i + "  " + icons[i].id + "   icon " + icon.style.left + "  " + icon.style.top) 
+				icon.style.top = 50 + ( i * 50 ) + "px"
 				setInterval(jiggle, 600); 
-
 			}
 		}
 		init()  

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+    <!-- START pretend web page  -->
+    Click around and click the button => Then click the 'click' buttons in the upper right. TODO:
+    Make the select widget work.
+    <hr />
+    <button onClick="buttonClicked()">clickme</button>
+    <select onChange="selectChanged()">
+        <option>Click me 1</option>
+        <option>Click me 2</option>
+        <option>Click me 3</option>
+        <option>Click me 4</option>
+        <option>Click me 5</option>
+        <option>Click me 6</option>
+    </select>
+    <input type='text' id='log' value='' />
+    <script>
+        let count = 0
+        function buttonClicked() {
+            count++;
+            console.log("%c BUTTON: " + count, "background:red;")
+            document.getElementById('log').value = "BUTTON clicked " + count;
+        }
+
+        function selectChanged() {
+            count++;
+            document.getElementById('log').value = "SELECT selected" + count;
+        }
+    </script>
+
+    <!-- END pretend web page  -->
+
+    <!-- START ADDING AUTOMATION INSTRUMENT -->
+    <style>
+        #square {
+            /* background-color: #fea943; */
+            position: absolute;
+            left: 150px;
+            top: 150px;
+            z-index: 100;
+            width: 20px;
+            height: 20px;
+            border-style: solid;
+            border-width: thick;
+            border-color: #fea943;
+        }
+    </style>
+    <div id='square'>&nbsp;</div>
+    <script>
+        const click = "click"
+        function bindEvent(element, eventName, eventHandler) {
+            if (element.addEventListener) {
+                //IE
+                element.addEventListener(eventName, eventHandler, false);
+            } else if (element.attachEvent) {
+                element.attachEvent('on' + eventName, eventHandler);
+            }
+        }
+
+        bindEvent(window, 'message', function (e) {
+            if (e.data !== null && e.data.length > 0) {
+                const obj = JSON.parse(e.data);
+                document.getElementById("square").zIndex = -100; // hide the square ( otherwise it would mess w/ what gets clicked )
+
+                if (obj.e === 'click') {
+                    const eventType = obj.e; // currently only 'click' is defined
+                    const x = parseInt(obj.x);
+                    const y = parseInt(obj.y);
+                    const clickedOnElement = document.elementFromPoint(x, y);
+                    clickedOnElement.click();
+                    //console.log(clickedOnElement)
+                    moveTheFakeCursor(x, y);
+                    console.log("REC! %c " + x + " and " + y, "background:#9ffEf0;");
+                }
+                document.getElementById("square").zIndex = 10; // bring it back
+            }
+        });
+        const moveTheFakeCursor = (x, y) => {
+            const x2 = parseInt(x)
+            const y2 = parseInt(y)
+            const left = (-10 + x2) + "px";
+            const top = (-10 + y2) + "px";
+            document.getElementById("square").style.left = left;
+            document.getElementById("square").style.top = top;
+
+        }
+        function clicked(event) {
+            moveTheFakeCursor(event.clientX, event.clientY)
+            const obj = {
+                e: 'click',
+                x: event.clientX,
+                y: event.clientY
+            }
+            window.parent.postMessage(JSON.stringify(obj), '*');
+            const clickedOnElement = document.elementFromPoint(obj.x, obj.y);
+            console.log(" 3 ESN! %c x: " + obj.x + " and y: " + obj.y, "background:#90EE90;");
+            console.log(clickedOnElement);
+        }
+        document.addEventListener("click", clicked);
+        //document.addEventListener("mousedown", clicked);
+    </script>
+    <!-- END ADDING AUTOMATION INSTRUMENT -->
+</body>
+
+</html>

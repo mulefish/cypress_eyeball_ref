@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>SDET iFrame Toy</title>
+    <style>
+        #results {
+            width: 20vw
+        }
+
+        #the_iframe {
+            width: 80vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NOTE 1 iframe.html' with proper url -->
+    <!-- NOTE 2 this will need to run on the same server as the iframe : otherwise cross frame comms is not possible -->
+    <input type="text" id="url" size='200' value='iframe.html'> </input>
+    <button onClick='loadPage()'>Load</button>
+    <br />
+    <table border='1'>
+        <tr>
+            <td valign='top'>
+                <div>
+                    <!-- <iframe src='https://localhost:3000/1073741812/1027602922' id='the_iframe'></iframe> -->
+                    <iframe src='iframe.html' id='the_iframe'></iframe>
+                </div>
+            </td>
+            <td valign='top'>
+                <div id="results"></div>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        let steps = [];
+        function bindEvent(element, eventName, eventHandler) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, eventHandler, false);
+            } else if (element.attachEvent) {
+                element.attachEvent('on' + eventName, eventHandler);
+            }
+        }
+
+        const daughter = document.getElementById('the_iframe');
+        const results = document.getElementById('results');
+        const tellDaughter = (index) => {
+            const obj = steps[index];
+            const o = JSON.stringify(obj);
+            daughter.contentWindow.postMessage(o, '*');
+        }
+        bindEvent(window, 'message', function (e) {
+            if (e.data !== null && e.data.length > 0) {
+                const obj = JSON.parse(e.data);
+                if (obj.x === 0 && obj.y === 0) {
+                    // ignore it
+                } else {
+                    steps.push(obj);
+                    let html = "<table border='1'>"
+                    steps.forEach((x, i) => {
+
+                        const selectWidget = `<select onChange='changeTo(this)'><option>click</option><option>select</option></select>`;
+                        const row = `<tr><td><button onClick='tellDaughter(${i})'>fire</button></td><td>${selectWidget}<td>${x.x}</td><td>${x.y}</td></tr>`;
+
+
+                        //const row = `<tr><td><button onClick='tellDaughter(${i})'>${x.e}</button></td><td>${x.x}</td><td>${x.y}</td></tr>`;
+                        html += row;
+                    })
+                    html += "</table>";
+                    document.getElementById("results").innerHTML = html;
+                }
+            }
+        });
+    </script>
+    <script>
+        function loadPage() {
+            const url = document.getElementById("url").value;
+            document.getElementById("the_iframe").src = url;
+        }
+    </script>
+</body>
+
+</html>
